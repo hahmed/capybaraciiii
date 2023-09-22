@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - ha/migrate-to-github-actions
+
+env:
+  CI: true
+  RAILS_ENV: test
+  RACK_ENV: test
+  MYSQL_HOST: 127.0.0.1
+  MYSQL_PORT: 3306
+  REDIS_HOST: redis
+  REDIS_PORT: 6379
+  PGPORT: 5432
+  BUNDLE_DEPLOYMENT: false
+  SELENIUM_DRIVER_URL: "http://127.0.0.1:4444/wd/hub"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+      selenium:
+        image: selenium/standalone-chrome:latest
+        volumes:
+          - "/dev/shm:/dev/shm"
+        ports:
+          - 4444:4444
+    strategy:
+      fail-fast: false
+      matrix:
+        experimental: [false]
+        ruby: [3.2]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+          rubygems: latest
+          bundler: latest
+
+      - name: Set up Redis
+        uses: supercharge/redis-github-action@1.2.0
+
+      - name: Tests
+        run: |
+          bundle exec rake db:setup
+          bundle exec rake test
