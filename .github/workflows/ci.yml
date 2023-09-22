@@ -11,7 +11,6 @@ env:
   REDIS_PORT: 6379
   PGPORT: 5432
   BUNDLE_DEPLOYMENT: false
-  SELENIUM_DRIVER_URL: "http://127.0.0.1:4444/wd/hub"
 
 jobs:
   test:
@@ -26,8 +25,6 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
       selenium:
         image: selenium/standalone-chrome:latest
-        volumes:
-          - "/dev/shm:/dev/shm"
         ports:
           - 4444:4444
     strategy:
