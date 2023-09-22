@@ -3,7 +3,6 @@ name: CI
 on: [push, pull_request]
 
 env:
-  CI: true
   RAILS_ENV: test
   RACK_ENV: test
   MYSQL_HOST: 127.0.0.1
