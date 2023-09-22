@@ -1,9 +1,6 @@
 name: CI
 
-on:
-  push:
-    branches:
-      - ha/migrate-to-github-actions
+on: [push, pull_request]
 
 env:
   CI: true
