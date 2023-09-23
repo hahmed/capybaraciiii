@@ -3,9 +3,7 @@ require "test_helper"
   require "application_system_test_case"
 
   class ListPosts < ApplicationSystemTestCase
-    if ENV["CI"]
-      driven_by :selenium, using: :headless_chrome
-    end
+    driven_by :selenium, using: :headless_chrome
 
     test "See post" do
       visit posts_path
